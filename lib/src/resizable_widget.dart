@@ -18,6 +18,7 @@ class ResizableWidget extends StatefulWidget {
     required this.child,
     required this.dragWidgetsArea,
     required this.triggersList,
+    required this.controller
   }) {
     height ??= areaHeight;
     width ??= areaWidth;
@@ -38,35 +39,34 @@ class ResizableWidget extends StatefulWidget {
   final Widget child;
   final Size dragWidgetsArea;
   final List<Trigger> triggersList;
+  final ResizableWidgetController? controller;
 
   @override
   State<ResizableWidget> createState() => _ResizableWidgetState();
 }
 
 class _ResizableWidgetState extends State<ResizableWidget> {
-  late final ResizableWidgetController controller;
 
   @override
   void initState() {
-    controller = ResizableWidgetController();
-    controller.init(finalSize: widget.size, showDragWidgets: widget.showDragWidgets);
+    widget.controller!.init(finalSize: widget.size, showDragWidgets: widget.showDragWidgets);
     super.initState();
   }
 
   @override
   void dispose() {
-    controller.dispose();
+    widget.controller!.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
-      animation: controller,
+      animation: widget.controller!,
       child: Stack(
         children: widget.triggersList.map((trigger) {
           return TriggerWidget(
-            onDrag: trigger.dragTriggerType.getOnDragFunction(controller),
+            onDrag: trigger.dragTriggerType.getOnDragFunction(widget.controller!),
             trigger: trigger,
           );
         }).toList(),
@@ -75,19 +75,19 @@ class _ResizableWidgetState extends State<ResizableWidget> {
         return Stack(
           children: <Widget>[
             Positioned(
-              top: controller.top,
-              left: controller.left,
-              bottom: controller.bottom,
-              right: controller.right,
+              top: widget.controller!.top,
+              left: widget.controller!.left,
+              bottom: widget.controller!.bottom,
+              right: widget.controller!.right,
               child: widget.child,
             ),
             Positioned(
-              top: controller.top - widget.dragWidgetsArea.height,
-              left: controller.left - widget.dragWidgetsArea.width,
-              bottom: controller.bottom - widget.dragWidgetsArea.height,
-              right: controller.right - widget.dragWidgetsArea.width,
+              top: widget.controller!.top - widget.dragWidgetsArea.height,
+              left: widget.controller!.left - widget.dragWidgetsArea.width,
+              bottom: widget.controller!.bottom - widget.dragWidgetsArea.height,
+              right: widget.controller!.right - widget.dragWidgetsArea.width,
               child: Visibility(
-                visible: controller.showDragWidgets,
+                visible: widget.controller!.showDragWidgets,
                 child: triggersStack!,
               ),
             ),
