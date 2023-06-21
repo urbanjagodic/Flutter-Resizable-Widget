@@ -78,7 +78,7 @@ class ResizableWidgetController extends SizeCalculator with ChangeNotifier {
     );
   }
   
-  void showDragWidgets(bool value) {
+  void setDragWidgets(bool value) {
     _showDragWidgets = value;
   }
 }
